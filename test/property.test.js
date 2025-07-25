@@ -26,4 +26,11 @@ describe('Property API', () => {
     expect(res.body.properties[0]).toHaveProperty('address');
     expect(res.body.properties[0]).toHaveProperty('comparisonToAvg');
   });
+
+  it('should return 400 for missing fields', async () => {
+    const res = await request(app)
+      .post('/api/properties')
+      .send({ address: 'Incomplete Data' });
+    expect(res.statusCode).toEqual(400);
+  });
 });

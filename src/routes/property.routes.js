@@ -4,8 +4,9 @@ const {
   addProperty,
   searchProperties
 } = require('../controllers/property.controller');
+const validateProperty = require('../validators/property.validator');
 
-router.post('/properties', addProperty);
+router.post('/properties', validateProperty, addProperty);
 router.get('/properties/search', searchProperties);
 
 module.exports = router;

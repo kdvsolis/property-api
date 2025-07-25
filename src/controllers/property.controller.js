@@ -1,5 +1,5 @@
 const { properties } = require('../data/storage');
-const { getAveragePrice, getPriceComparison } = require('../utils/price.utils');
+const { getSearchResults } = require('../services/property.service');
 
 exports.addProperty = (req, res) => {
   const { address, suburb, price, description } = req.body;
@@ -12,14 +12,6 @@ exports.addProperty = (req, res) => {
 
 exports.searchProperties = (req, res) => {
   const { suburb } = req.query;
-  const list = suburb ? properties.filter(p => p.suburb === suburb) : properties;
-  const avgPrice = suburb ? getAveragePrice(suburb, properties) : null;
-
-  const results = list.map(p => ({
-    address: p.address,
-    price: p.price,
-    comparisonToAvg: getPriceComparison(p.price, avgPrice)
-  }));
-
+  const results = getSearchResults(properties, suburb);
   res.json({ properties: results });
 };

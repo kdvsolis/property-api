@@ -1,18 +1,67 @@
-Assumptions for the Property API
-💾 In-memory data storage will be used for simplicity, meaning properties are stored in a JavaScript array and will reset every time the server restarts.
+# 🏡 Property API
 
-🏘️ Each property must include address, suburb, price, and description—all are required fields in the POST /properties endpoint.
+A lightweight Express API for adding and searching real estate listings, built with clean separation of concerns and forward scalability in mind.
 
-📍 The suburb field is a simple string; no validation is done for real-world geographical correctness.
+---
 
-💰 The price field is assumed to be a number in currency format, not a string (e.g., 750000 not "750,000").
+## 📌 Assumptions
 
-🔍 For search, if a suburb filter is applied, results are compared to the average price within that suburb only.
+- 💾 **In-memory Storage**: Data is stored in a JavaScript array and resets on server restart.
+- 🏘️ **Required Fields**: Each property must include `address`, `suburb`, `price`, and `description`.
+- 📍 **Suburb Field**: Plain string input; no geospatial validation is applied.
+- 💰 **Price Field**: Expected to be a numeric value (e.g., `750000`, not `"750,000"`).
+- 🔍 **Search Behavior**: Optional `suburb` filter compares listing price to suburb average.
+- 📊 **Comparison Field**: Indicates if listing is *above*, *below*, *equal*, or *unknown* relative to average price.
+- 🔐 **Security**: No auth, rate limiting, or other protections are implemented for simplicity.
+- 🚫 **Excluded Features**: No pagination, sorting, caching—focus remains on logic and code clarity.
 
-📊 The comparison field (above, below, equal, or unknown) is based solely on calculated average price within the filtered result set.
+---
 
-🔐 No authentication or authorization is implemented (API is open for simplicity).
+## 🛠️ Code Structure Highlights
 
-🛠️ No rate limiting, pagination, sorting, or caching is added since the scale is small.
+- **Controllers** handle HTTP logic and responses.
+- **Service Layer** offloads business logic for filtering and price comparison.
+- **Validation Middleware** checks input structure and types before processing.
+- **Utility Modules** encapsulate logic like price calculations.
+- **Constants Folder** centralizes reusable labels for maintainability.
+- **Logger Middleware** provides basic observability for incoming requests.
 
-📦 API is expected to scale in future, so a clean structure is used for easy migration to a database or ORM later.
+---
+
+## 🧩 Input Type Considerations
+
+Input validation is handled via middleware to ensure:
+- Presence and correct types of all required fields.
+- Graceful handling of malformed or missing data.
+- Future-proofing for stricter schema validation via `Joi` or `Zod`.
+
+---
+
+## 🧪 Test Coverage Improvements
+
+Initial tests cover successful flows for adding and searching properties. Expanded tests include:
+- Missing and invalid field checks
+- Suburb filters with single and multiple listings
+- Edge cases (e.g., price exactly equal to average)
+- Logical separation between business logic unit tests and integration tests via `supertest`
+
+---
+
+## 🚀 Scaling Strategy (Beyond Constraints)
+
+While this implementation uses in-memory storage per the spec, scaling for larger data volumes would involve:
+
+- Migration to persistent storage (e.g., PostgreSQL or MongoDB)
+- Indexing for efficient suburb queries
+- Caching with Redis for average price calculations
+- Service-layer abstractions to enable backend refactoring without affecting route structure
+- ORM integration for safer and more expressive data handling
+
+---
+
+## 🧪 Testing Instructions
+
+Run the test suite with:
+
+```bash
+npm test
